@@ -55,7 +55,9 @@ app.post('/users', async (req, res) => {
     const userData = await newUser.save();
 
     res.status(201).send(userData);
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 });
 
 app.get('/', (_req, res) => {
