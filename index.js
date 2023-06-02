@@ -59,6 +59,26 @@ app.post('/users', async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 });
+//get all users
+app.get('/users', async (_req, res) => {
+  try {
+    const users = await User.find();
+    if (users) {
+      res.status(200).send({
+        success: true,
+        message: 'return all users',
+        data: users,
+      });
+    } else {
+      res.status(404).send({
+        success: false,
+        message: 'users not found',
+      });
+    }
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
 
 app.get('/', (_req, res) => {
   res.send('<h1>Welcome to Home Page</h1>');
