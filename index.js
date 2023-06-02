@@ -80,6 +80,28 @@ app.get('/users', async (_req, res) => {
   }
 });
 
+//get a single user by id
+app.get('/users/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findOne({ _id: id });
+    if (user) {
+      res.status(200).send({
+        success: true,
+        message: 'returned a single user',
+        data: user,
+      });
+    } else {
+      res.status(404).send({
+        success: false,
+        message: 'not found',
+      });
+    }
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
+
 app.get('/', (_req, res) => {
   res.send('<h1>Welcome to Home Page</h1>');
 });
