@@ -51,6 +51,28 @@ const connectDB = async () => {
   }
 };
 
+//delete data by id
+app.delete('/users/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const deletedData = await User.findByIdAndDelete({ _id: id });
+    if (deletedData) {
+      res.status(200).send({
+        success: true,
+        message: 'deleted a single product',
+        data: deletedData,
+      });
+    } else {
+      res.status(404).send({
+        success: false,
+        message: 'user was not deleted with this id',
+      });
+    }
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
+
 //create users
 app.post('/users', async (req, res) => {
   try {
