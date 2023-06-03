@@ -51,6 +51,42 @@ const connectDB = async () => {
   }
 };
 
+//update a user by id
+app.put('/users/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updatedUser = await User.findByIdAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          name: req.body.name,
+          age: req.body.age,
+          rating: req.body.rating,
+          phone: req.body.phone,
+          languages: req.body.languages,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+    if (updatedUser) {
+      res.status(200).send({
+        success: true,
+        message: 'User is updated by id',
+        data: updatedUser,
+      });
+    } else {
+      res.status(404).send({
+        success: false,
+        message: 'User is not updated with the given id',
+      });
+    }
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
+
 //delete data by id
 app.delete('/users/:id', async (req, res) => {
   try {
