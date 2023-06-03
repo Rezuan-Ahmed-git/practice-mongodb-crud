@@ -5,6 +5,7 @@ const app = express();
 const port = 4000;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 //create user schema
 const usersSchema = new mongoose.Schema({
@@ -14,6 +15,14 @@ const usersSchema = new mongoose.Schema({
   },
   age: {
     type: Number,
+    required: true,
+  },
+  rating: {
+    type: Number,
+    required: true,
+  },
+  phone: {
+    type: String,
     required: true,
   },
   languages: [
@@ -48,6 +57,8 @@ app.post('/users', async (req, res) => {
     const newUser = new User({
       name: req.body.name,
       age: req.body.age,
+      rating: req.body.rating,
+      phone: req.body.phone,
       languages: req.body.languages,
     });
 
@@ -60,9 +71,20 @@ app.post('/users', async (req, res) => {
   }
 });
 //get all users
-app.get('/users', async (_req, res) => {
+app.get('/users', async (req, res) => {
   try {
-    const users = await User.find();
+    let users;
+    const age = req.query.age;
+    const rating = req.query.rating;
+
+    if (age && rating) {
+      users = await User.find({
+        $and: [{ age: { $gt: age } }, { rating: { $gt: rating } }],
+      });
+    } else {
+      users = await User.find().sort({ age: 1 });
+    }
+
     if (users) {
       res.status(200).send({
         success: true,
@@ -102,6 +124,7 @@ app.get('/users/:id', async (req, res) => {
   }
 });
 
+//Home page
 app.get('/', (_req, res) => {
   res.send('<h1>Welcome to Home Page</h1>');
 });
